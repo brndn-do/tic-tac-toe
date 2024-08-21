@@ -29,11 +29,12 @@ dialog * {
 
 form {
     display: grid;
-    gap: min(2vh, 2vw);
+    gap: min(3vh, 3vw);
 }
 
 form div {
     display: flex;
+    flex-wrap: wrap;
     justify-content: space-between;
     align-items: center;
     gap: min(1vh, 1vw);
@@ -41,6 +42,7 @@ form div {
 
 form input {
     padding: .5rem;
+    width: 100%;
 }
 
 form div:nth-child(3) {
