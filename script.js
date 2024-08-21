@@ -1,14 +1,14 @@
 "use strict"
 
 const gameboard = (function() {
-    const board = new Array(9).fill("_");
+    const board = new Array(9).fill("");
     const winningSequences = [[0, 1, 2], [3, 4, 5], [6, 7, 8],
                               [0, 3, 6], [1, 4, 7], [2, 5, 8],
                               [0, 4, 8], [2, 4, 6]];
 
     const fillCell = (index, char) => board[index] = char;
     const getCell = (index) => board[index];
-    const isEmpty = (index) => board[index] === "_";
+    const isEmpty = (index) => board[index] === "";
 
     const checkWin = () => {
         for (const sequence of winningSequences) {
@@ -16,10 +16,13 @@ const gameboard = (function() {
                 return getCell(sequence[0]);
             }
         }
-        return "_";
+        return "";
     };
 
     const checkTie = () => {
+        if (checkWin()) {
+            return false;
+        }
         for (let i = 0; i < 9; i++) {
             if (isEmpty(i)) {
                 return false;
@@ -45,8 +48,7 @@ const createGame = function(name1, char1, name2, char2) {
         if (gameboard.isEmpty(index)) {
             gameboard.fillCell(index, player1.char);
             const checkWin = gameboard.checkWin();
-            if (checkWin !== "_") {
-                console.log("here2");
+            if (checkWin !== "") {
                 if (checkWin === player1.char) {
                     winner = player1.name;
                 }
@@ -56,16 +58,11 @@ const createGame = function(name1, char1, name2, char2) {
                 gameOver = true;
             }
             else if (gameboard.checkTie()) {
-                console.log("here3");
-                winner = "Tie!";
                 gameOver = true;
             }
             let temp = player1;
             player1 = player2;
             player2 = temp;
-        }
-        else {
-            console.log("error: already filled")
         }
     };
 
@@ -75,43 +72,61 @@ const createGame = function(name1, char1, name2, char2) {
     return {makeMove, getGameOver, getWinner};
 };
 
-function displayBoard() {
-    let res = [[], [], []];
-    for (let i = 0; i < 3; i++) {
-        res[0].push(gameboard.getCell(i));
+const display = (function() {
+    const body = document.querySelector('body');
+    const clickCell = (event) => {
+        if (!game.getGameOver()) {
+            let index = event.target.id;
+            game.makeMove(index);
+            render();
+            if (game.getGameOver()) {
+                const message = document.createElement('div');
+                message.className = 'message';
+                if (!game.getWinner()) {
+                    message.textContent = 'Tie!';
+                }
+                else {
+                    message.textContent = `${game.getWinner()} wins!`;
+                }
+                body.appendChild(message);
+            }
+        }
+    };
+    const render = () => {
+        const board = document.createElement('div');
+        board.className = 'board';
+        for (let i = 0; i < 9; i++ ) {
+            const cell = document.createElement('div');
+            cell.className = 'cell';
+            cell.id = i;
+            cell.textContent = gameboard.getCell(i);
+            cell.addEventListener('click', clickCell);
+            board.appendChild(cell);
+        }
+        if (document.querySelector('.board')) {
+            body.removeChild(document.querySelector('.board'));
+        }
+        body.appendChild(board);
+    };
+    return {render};
+})();
+
+function startGame(event) {
+    event.preventDefault();
+    const name1 = document.getElementById('name1').value;
+    const name2 = document.getElementById('name2').value;
+    if (name1 && name2) {
+        dialog.close();
+        game = createGame(name1, "O", name2, "X");
+        display.render();
     }
-    for (let i = 3; i < 6; i++) {
-        res[1].push(gameboard.getCell(i));
+    else {
+        alert("Please enter player names!");
     }
-    for (let i = 6; i < 9; i++) {
-        res[2].push(gameboard.getCell(i));
-    }
-    console.log(res);
 }
 
-const game = createGame("bot1", "O", "bot2", "X"); 
-
-/*
-while (!game.getGameOver) {
-    game.makeMove();
-}
-
-console.log("Result: " + game.getWinner);
-*/
-
-game.makeMove(0);
-info();
-game.makeMove(1);
-info();
-game.makeMove(3);
-info();
-game.makeMove(5);
-info();
-game.makeMove(6);
-info();
-
-function info() {
-    displayBoard();
-    console.log(game.getGameOver());
-    console.log(game.getWinner());
-}
+const button = document.querySelector('button');
+button.addEventListener("click", startGame);
+const dialog = document.querySelector('dialog');
+dialog.showModal();
+let game;

@@ -8,3 +8,70 @@
 html, body {
     height: 100%;
 }
+
+body {
+    display: grid;
+    justify-content: center;
+    padding: min(5vh, 5vw);
+    font-size: min(10vh, 10vw);
+}
+
+dialog {
+    margin: auto;
+    padding: min(5vh, 5vw);
+    border: 2px solid;
+    border-radius: 2rem;
+}
+
+dialog * {
+    font-size: 24px;
+}
+
+form {
+    display: grid;
+    gap: min(2vh, 2vw);
+}
+
+form div {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: min(1vh, 1vw);
+}
+
+form input {
+    padding: .5rem;
+}
+
+form div:nth-child(3) {
+    display: flex;
+    justify-content: center;
+}
+
+form button {
+    border: 2px solid;
+    border-radius: .5rem;
+    padding: .2rem;
+    width: 6rem;
+}
+
+.board {
+    height: min(60vh, 60vw);
+    width: min(60vh, 60vw);
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+}
+
+.cell {
+    width: min(20vh, 20vw);
+    height: min(20vh, 20vw);
+    border: 1px solid;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.message {
+    display: grid;
+    justify-content: center;
+}
